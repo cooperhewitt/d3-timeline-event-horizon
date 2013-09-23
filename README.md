@@ -87,3 +87,4 @@ tolerated) for the sake of expediency but will be fixed soon.
 See also
 --
 
+* [The experimental Object Timeline feature on the Cooper-Hewitt collections website](http://collection.cooperhewitt.org/experimental/#tl)
