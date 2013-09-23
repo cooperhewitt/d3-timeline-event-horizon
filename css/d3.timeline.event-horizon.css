@@ -1,0 +1,66 @@
+#timeline {
+	  height: 200px;
+	  width: 100%;
+	  min-width: 700px;
+	  border: none;
+	  margin-bottom: 1em;
+}
+
+.timeline-event {
+	font-family: sans-serif;
+	font-size: 12px;
+	fill: #000;
+    	font-weight: 100;		
+}
+
+.timeline-event-item:hover {
+    font-weight: 600;
+}
+
+.timeline-block {
+    opacity: .2;
+    fill: #004F98;
+}
+
+.timeline-item {
+    opacity: .3;
+    fill: 'orange';
+}
+
+.timeline-before-after {
+    fill: #adadad;
+}
+
+.timeline-event-year-hover {
+    font-weight: 700;
+}
+
+.timeline-event-year-ending {
+    fill: #ccc !important;  
+}
+
+.timeline-event-foo {
+    font-weight: 700;
+}
+
+.timeline-span-line {
+    stroke: #000;
+    stroke-width: 3;
+}
+
+.timeline-span-rect {
+    fill: orange;
+    opacity: 1;
+}
+
+.youarehere {
+    fill: #004F98;
+    stroke: #004F98;
+    stroke-width: 6;
+}
+
+.echo {
+    stroke: #fff !important;
+    fill: #fff !important;
+    stroke-width: 6;
+}
