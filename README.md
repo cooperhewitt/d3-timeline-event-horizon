@@ -82,6 +82,8 @@ tolerated) for the sake of expediency but will be fixed soon.
 
 * The library currently assumes the presence of jQuery (a copy of which is included in the `lib` directory. This is not a feature and will be fixed soon. 
 
+* The code that handles label placement could use some help.
+
 * Patches and pull requests are welcome.
 
 See also
