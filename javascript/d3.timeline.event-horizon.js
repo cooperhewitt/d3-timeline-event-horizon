@@ -235,7 +235,7 @@ timeline.prototype.draw_endings = function(){
 	    }
 
 	    var dist = (end < d) ? (scale(d) - scale(end)) : (scale(end) - scale(d));
-	    var show = ((dist <= -16) || (dist >= 16)) ? 1 : 0;
+	    var show = (dist >= 16) ? 1 : 0;
 
 	    return (show) ? d : "";
 	})
@@ -433,7 +433,7 @@ timeline.prototype.draw_evt = function(){
 	    .attr("class", "timeline-event timeline-event-evt timeline-evt-start");
     }
 
-    if ((evt_end) && (evt_end != evt_start) && (show_end)){
+    if ((evt_end) && (evt_end != evt_start) && (evt_end > this.min) && (show_end)){
 
 	var x = this.scale(end);
 
