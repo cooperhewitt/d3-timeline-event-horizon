@@ -23,11 +23,17 @@ First you need to load the necessary Javascript and CSS bits to draw the timelin
 
 	<link rel="stylesheet" type="text/css" href="css/d3.timeline.event-horizon.css" />
 	<script type="text/javascript" src="javascript/d3.min.js"></script>
-	<script type="text/javascript" src="javascript/d3.timeline.event-horizon.js"></script>
+	<script type="text/javascript" src="javascript/d3.timeline.event-horizon.min.js"></script>
 
-Then you need to add a `div` element that will contain the timeline:
+Then you need to add a `div` element that will contain the timeline. The height
+and width of the timeline are derived from the corresponding properties of the
+parent `div` element.
 
 	<div id="timeline"></div>
+
+_Important: As of this writing the library can manage dynamic widths but really
+only works for timelines that are 200px tall. This is a bug that exists (and is
+tolerated) for the sake of expediency but will be fixed soon._
 
 The you'll need to define the context (a list of events) for the timeline and
 optional event that will displayed in that context. Once you've done that simply
@@ -59,7 +65,7 @@ create a new `timeline` object and call its `draw` method.
 	</script>
 
 The timeline also has a `redraw` method which is pretty much what it sounds like
-but needs to invoked explicitly. Here's how you would do it using jQuery:
+but needs to invoked explicitly. Here's how you might do it using jQuery:
 
 	$(window).resize(function(){
 		tl.redraw();
