@@ -75,8 +75,8 @@ tolerated) for the sake of expediency but will be fixed soon.
 
 * Try to be gentle if you look under the hood. Perhaps this is the optimal way
   to accomplish the functionality we're after with the timeline but somehow I
-  doubt it. Elegance of code has been sacrificed in the short-term but getting a
-  working demo out the door.
+  doubt it. Elegance of code has been sacrificed in the short-term in favour of
+  getting a working demo out the door.
 
 * Patches and pull requests are welcome.
 
