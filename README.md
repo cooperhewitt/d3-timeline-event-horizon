@@ -1,15 +1,37 @@
 d3-timeline-event-horizon
 ==
 
+The d3-timeline-event-horizon library is a Javascript library for creating an
+interactive visualization depicting when an event occured relative to a
+user-defined milestones and using those milestones as a bracketing
+device.
+
+The timeline's goal is to visualize — and to develop a visual language to represent — an individual event relative to the velocity
+of major events that define the larger set of events. Wherever possible the
+library will display both the start and end dates for an object represented as its own underlined
+event span. If only the start date for an event is know it is indicated that using
+a blue arrow.
+
+There is also an `echo` date for an event that is indicated using a white
+arrow. For example, the Cooper-Hewitt uses the `echo` date to denote the year in
+which an object was acquired in to the permanent collection.
+
 Example
 --
 
+First you need to load the necessary Javascript and CSS bits to draw the timeline:
 
 	<link rel="stylesheet" type="text/css" href="css/d3.timeline.event-horizon.css" />
 	<script type="text/javascript" src="javascript/d3.min.js"></script>
 	<script type="text/javascript" src="javascript/d3.timeline.event-horizon.js"></script>
 
+Then you need to add a `div` element that will contain the timeline:
+
 	<div id="timeline"></div>
+
+The you'll need to define the context (a list of events) for the timeline and
+optional event that will displayed in that context. Once you've done that simply
+create a new `timeline` object and call its `draw` method.
 
 	<script type="text/javascript">
 
@@ -34,8 +56,14 @@ Example
 	var tl = new timeline("timeline", context);		
 	tl.draw(event);
 
+	</script>
+
+The timeline also has a `redraw` method which is pretty much what it sounds like
+but needs to invoked explicitly. Here's how you would do it using jQuery:
+
 	$(window).resize(function(){
 		tl.redraw();
 	});
 
-	</script>
+See also
+--
