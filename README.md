@@ -4,7 +4,7 @@ d3-timeline-event-horizon
 The d3-timeline-event-horizon library is a Javascript library for creating an
 interactive visualization depicting when an event occured relative to a
 user-defined milestones and using those milestones as a bracketing
-device.
+device. It piggybacks atop the mighty mighty [D3.js](http://d3js.org/) library.
 
 The timeline's goal is to visualize — and to develop a visual language to represent — an individual event relative to the velocity
 of major events that define the larger set of events. Wherever possible the
@@ -30,10 +30,6 @@ and width of the timeline are derived from the corresponding properties of the
 parent `div` element.
 
 	<div id="timeline"></div>
-
-_Important: As of this writing the library can manage dynamic widths but really
-only works for timelines that are 200px tall. This is a bug that exists (and is
-tolerated) for the sake of expediency but will be fixed soon._
 
 The you'll need to define the context (a list of events) for the timeline and
 optional event that will displayed in that context. Once you've done that simply
@@ -71,5 +67,19 @@ but needs to invoked explicitly. Here's how you might do it using jQuery:
 		tl.redraw();
 	});
 
+Notes
+--
+
+* As of this writing the library can manage dynamic widths but really only works for timelines that are 200px tall. This is a bug that exists (and is
+tolerated) for the sake of expediency but will be fixed soon.
+
+* Try to be gentle if you look under the hood. Perhaps this is the optimal way
+  to accomplish the functionality we're after with the timeline but somehow I
+  doubt it. Elegance of code has been sacrificed in the short-term but getting a
+  working demo out the door.
+
+* Patches and pull requests are welcome.
+
 See also
 --
+
