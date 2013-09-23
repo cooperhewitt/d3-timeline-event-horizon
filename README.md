@@ -67,6 +67,8 @@ but needs to invoked explicitly. Here's how you might do it using jQuery:
 		tl.redraw();
 	});
 
+A couple example is available in the `example` directory.
+
 Notes
 --
 
@@ -77,6 +79,8 @@ tolerated) for the sake of expediency but will be fixed soon.
   to accomplish the functionality we're after with the timeline but somehow I
   doubt it. Elegance of code has been sacrificed in the short-term in favour of
   getting a working demo out the door.
+
+* The library currently assumes the presence of jQuery (a copy of which is included in the `lib` directory. This is not a feature and will be fixed soon. 
 
 * Patches and pull requests are welcome.
 
