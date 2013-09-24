@@ -1,18 +1,22 @@
 d3-timeline-event-horizon
 ==
 
-![timelines](images/timelines-object-before.png)
+![span](images/timelines-object-span.png)
 
 The d3-timeline-event-horizon library is a Javascript library for creating an
 interactive visualization depicting when an event occured relative to a
 user-defined milestones and using those milestones as a bracketing
 device. It piggybacks atop the mighty mighty [D3.js](http://d3js.org/) library.
 
+![before](images/timelines-object-before.png)
+
 The timeline's goal is to visualize — and to develop a visual language to represent — an individual event relative to the velocity
 of major events that define the larger set of events. Wherever possible the
 library will display both the start and end dates for an object represented as its own underlined
 event span. If only the start date for an event is know it is indicated that using
 a blue arrow.
+
+![span hover](images/timelines-object-span-hover.png)
 
 There is also an `echo` date for an event that is indicated using a white
 arrow. For example, the Cooper-Hewitt uses the `echo` date to denote the year in
