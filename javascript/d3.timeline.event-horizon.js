@@ -1,5 +1,12 @@
-// See the way all the heights and offsets are hard-coded?
+// See the way some of the heights and offsets are hard-coded?
 // That's not a feature. One thing at a time (20130918/straup)
+
+// Also the stuff that looks like this: I feel like I must be doing
+// something terribly wrong (or obvious) here but I am not sure what...
+// (20130919/straup)
+// dist = (start < d) ? (scale(d) - scale(echo)) : (scale(echo) - scale(d));
+// show = ((dist <= -18) || (dist >= 18)) ? 1 : 0;
+
 
 function timeline(container, ctx){
     
@@ -17,8 +24,9 @@ function timeline(container, ctx){
     var endings = [];
 
     for (var i in this.ctx){
+
 	var start = this.ctx[i]['start'];
-	
+
 	if ((start) && ($.inArray(start, beginnings) == -1)){
 	    beginnings.push(start);
 	}
@@ -52,9 +60,11 @@ function timeline(container, ctx){
     this.h = null
     this.w = null;
 
-    this.evt = null;
+    this.h_labels = null;
+    this.h_years = null;
+    this.h_events = 40;
 
-    this.setup()
+    this.evt = null;
 }
 
 timeline.prototype.setup = function(){
@@ -74,13 +84,58 @@ timeline.prototype.setup = function(){
 
     svg.attr("width", w);
     svg.attr("height", h);
-
+    
     var scale = d3.scale.linear()
 	.domain([this.before, this.after])
 	.range([ 0, w ]);
     
     this.svg = svg;
     this.scale = scale;
+
+    // calculate height
+
+    var h_labels = 0;
+    var h_years = 0;
+
+    var prefix = 0;
+
+    if (this.evt){
+
+	// If only loops in Javascript weren't such a pain in the ass...
+	// (20130924/straup)
+
+	if (this.evt['start_prefix']){
+	    var dims = this.measure_text(this.evt['start_prefix'] + " ");
+	    prefix = Math.max(prefix, dims['width']);
+	}
+
+	if (this.evt['end_prefix']){
+	    var dims = this.measure_text(this.evt['end_prefix'] + " ");
+	    prefix = Math.max(prefix, dims['width']);
+	}
+
+	if (this.evt['echo_prefix']){
+	    var dims = this.measure_text(this.evt['echo_prefix'] + " ");
+	    prefix = Math.max(prefix, dims['width']);
+	}
+    }
+
+    for (var i in this.ctx){
+
+	var dims_labels = this.measure_text(this.ctx[i]['name']);
+	h_labels = Math.max(dims_labels['width'], h_labels);
+
+	var dims_years = this.measure_text(this.ctx[i]['start']);
+	h_years = Math.max((dims_years['width'] + prefix), h_years);
+    }
+
+    this.h_labels = Math.ceil(h_labels);
+    this.h_years = Math.ceil(h_years);
+
+    var new_h = this.h_labels + this.h_events + this.h_years;
+    this.h = new_h;
+
+    this.svg.attr("height", this.h);
 }
 
 timeline.prototype.redraw = function(){
@@ -88,7 +143,6 @@ timeline.prototype.redraw = function(){
     var s = tl.select("svg");
     s.remove();
 
-    this.setup();
     this.draw(this.evt);
 }
 
@@ -97,6 +151,8 @@ timeline.prototype.draw = function(evt){
     if (evt){
 	this.evt = evt;
     }
+
+    this.setup();
 
     this.draw_event_blocks();
     this.draw_beginnings();
@@ -111,6 +167,9 @@ timeline.prototype.draw_event_blocks = function(){
     var max = this.max;
     var h = this.h;
 
+    var h_events = this.h_events;
+    var h_years = this.h_years;
+
     this.svg.selectAll("rect-fill")	
 	.data(this.ctx)
 	.enter()
@@ -119,7 +178,7 @@ timeline.prototype.draw_event_blocks = function(){
 	    return scale(d['start']);
 	})
 	.attr("y", function(d){
-	    return h - 75;
+	    return h - (h_years + h_events);
 	})
 	.attr("width", function (d){
 	    
@@ -130,7 +189,7 @@ timeline.prototype.draw_event_blocks = function(){
 	    return scale(d['end']) - scale(d['start']);
 	})
 	.attr("height", function(d){
-	    return 35;
+	    return h_events;
 	}) 
 	.attr("class", function(d){
 	    
@@ -155,6 +214,8 @@ timeline.prototype.draw_beginnings = function(){
     var self = this;
     var scale = this.scale;
 
+    var h = this.h;
+    
     this.svg.selectAll("text-beginnings")
 	.data(this.beginnings)
 	.enter()
@@ -170,28 +231,33 @@ timeline.prototype.draw_beginnings = function(){
 	    var echo = self.evt['echo'];
 	    
 	    var dist = (start < d) ? (scale(d) - scale(start)) : (scale(start) - scale(d));
-	    var show = ((! start) || (dist >= 16)) ? 1 : 0;
+	    var show = ((! start) || (dist >= 18)) ? 1 : 0;
 
 	    if ((show) && (end)){
 		dist = (start < d) ? (scale(d) - scale(end)) : (scale(end) - scale(d));
-		show = ((dist <= -16) || (dist >= 16)) ? 1 : 0;
+		show = ((dist <= -18) || (dist >= 18)) ? 1 : 0;
 	    }
 
 	    if ((show) && (echo)){
-		// I feel like I must be doing something wrong here
-		// but I am not sure what... (20130919/straup)
 		dist = (start < d) ? (scale(d) - scale(echo)) : (scale(echo) - scale(d));
-		show = ((dist <= -16) || (dist >= 16)) ? 1 : 0;
+		show = ((dist <= -18) || (dist >= 18)) ? 1 : 0;
 	    }
 
 	    return (show) ? d : "";
 	})
 	.attr("x", function(d, i){
+
+	    // sudo make '12' not a hardcoded variable
+	    // (20130924/straup)
+
 	    d = scale(d) - 12;
 	    return d;
 	})
 	.attr("y", function(d, i){
-	    return 195;
+
+	    var dims = self.measure_text(d);
+	    var offset = Math.floor(self.h_years - dims['width']); 
+	    return h - offset;
 	})
 	.attr("transform", function(d){
 
@@ -199,8 +265,14 @@ timeline.prototype.draw_beginnings = function(){
 		return;
 	    }
 
+	    var dims = self.measure_text(d);
+	    var offset = Math.floor(self.h_years - dims['width']); 
+
+	    // sudo make '13' not a hardcoded variable
+	    // (20130924/straup)
+
 	    var x = scale(d);
-	    var y = 183;
+	    var y = h - offset - 13;
 	    var parts = [-90, x, y].join(",");
 	    return "rotate(" + parts + ")";
 	})
@@ -217,6 +289,7 @@ timeline.prototype.draw_endings = function(){
 
     var self = this;
     var scale = this.scale;
+    var h = this.h;
 
     this.svg.selectAll("text-endings")
 	.data(this.endings)
@@ -235,7 +308,13 @@ timeline.prototype.draw_endings = function(){
 	    }
 
 	    var dist = (end < d) ? (scale(d) - scale(end)) : (scale(end) - scale(d));
-	    var show = (dist >= 16) ? 1 : 0;
+	    var show = (dist >= 18) ? 1 : 0;
+	    
+	    if ((show) && (self.evt['echo'])){
+
+		var dist = (self.evt['echo'] < d) ? (self.scale(d) - self.scale(self.evt['echo'])) : (self.scale(self.evt['echo']) - self.scale(d));
+		show = ((dist <= -18) || (dist >= 18)) ? 1 : 0;
+	    }
 
 	    return (show) ? d : "";
 	})
@@ -244,12 +323,18 @@ timeline.prototype.draw_endings = function(){
 	    return d;
 	})
 	.attr("y", function(d, i){
-	    return 195;
+	    var dims = self.measure_text(d);
+	    var offset = Math.floor(self.h_years - dims['width']); 
+	    return h - offset;
 	})
 	.attr("transform", function(d){
 	    if (d['name'] == 'before and after'){ return; }
+
+	    var dims = self.measure_text(d);
+	    var offset = Math.floor(self.h_years - dims['width']); 
+
 	    var x = scale(d);
-	    var y = 183;
+	    var y = h - offset - 13;
 	    var parts = [-90, x, y].join(",");
 	    return "rotate(" + parts + ")";
 	})
@@ -265,6 +350,8 @@ timeline.prototype.draw_ctx = function(){
     var self = this;
     var scale = this.scale;
     var h = this.h;
+    var h_years = this.h_years;
+    var h_events = this.h_events;
 
     var on_mouseover = function(d){
 
@@ -351,10 +438,10 @@ timeline.prototype.draw_ctx = function(){
 	    return d['name'];
 	})
 	.attr("x", function(d, i){
-	    return self.scale(d['start']) - 15;
+	    return self.scale(d['start']);
 	})
 	.attr("y", function(d, i){
-	    return 110;
+	    return h - (h_years + h_events);
 	})
 	.on('mouseover', on_mouseover)
 	.on('mouseout', on_mouseout)
@@ -365,8 +452,11 @@ timeline.prototype.draw_ctx = function(){
 		return;
 	    }
 
+	    // sudo wtf is '10' a hardcoded variable
+	    // (20130924/straup)
+
 	    var x = scale(d['start']);
-	    var y = h - 100;
+	    var y = h - (h_years + h_events + 10);
 	    var parts = [-90, x, y].join(",");
 	    return "rotate(" + parts + ")";
 	})
@@ -409,23 +499,42 @@ timeline.prototype.draw_evt = function(){
     var transform = this.rotation_for_date;
 
     var dist_end = (this.scale(start) - this.scale(end));
-    var show_end = ((dist_end <= -16) || (dist_end >= 16)) ? 1 : 0;
+    var show_end = ((dist_end <= -18) || (dist_end >= 18)) ? 1 : 0;
 
-    var show_acq = null;
+    var show_echo = null;
 
     if (this.evt['echo']){
-	var dist_acq = (start < this.evt['echo']) ? (this.scale(start) - this.scale(this.evt['echo'])) : (this.scale(this.evt['echo']) - this.scale(start));
-	show_acq = ((dist_acq < 0) || (dist_acq >= 16)) ? 1 : 0;
+	var dist_echo = (start < this.evt['echo']) ? (this.scale(start) - this.scale(this.evt['echo'])) : (this.scale(this.evt['echo']) - this.scale(start));
+	show_echo = ((dist_echo <= -18) || (dist_echo >= 18)) ? 1 : 0;
     }
+    
+    // sudo no but seriously wtf - see below
+    // (20130924/straup)
+
+    var wtf = 3;
 
     if (evt_start){
-	
+
+	var txt = evt_start;
+
+	if (this.evt['start_prefix']){
+	    txt = this.evt['start_prefix'] + " " + evt_start;
+	}
+
+	var dims = this.measure_text(txt, "timeline-event timeline-event-evt timeline-evt-start");
+	var offset = Math.floor(this.h_years - dims['width']); 
+
+	offset =  offset - (wtf * 4);
+
+	var h = this.h;
+	var y = h - offset;
+
 	this.svg.append("text")
-	    .text(evt_start)
-	    .attr("x", x - 5)
-	    .attr("y", 195)
+	    .text(txt)
+	    .attr("x", x + (wtf / 2))
+	    .attr("y", y)
 	    .attr("transform", function(d){
-		var y = 190;
+		var y = h - offset - wtf;
 		var parts = [-90, x, y].join(",");
 		return "rotate(" + parts + ")";
 	    })
@@ -435,14 +544,28 @@ timeline.prototype.draw_evt = function(){
 
     if ((evt_end) && (evt_end != evt_start) && (evt_end > this.min) && (show_end)){
 
+	var txt = evt_end;
+
+	if (this.evt['end_prefix']){
+	    txt = this.evt['end_prefix'] + " " + evt_end;
+	}
+
+	var dims = this.measure_text(txt, "timeline-event timeline-event-evt timeline-evt-start");
+	var offset = Math.floor(this.h_years - dims['width']); 
+
+	offset =  offset - (wtf * 3);
+
+	var h = this.h;
+	var y = h - offset;
+
 	var x = this.scale(end);
 
 	this.svg.append("text")
-	    .text(evt_end)
-	    .attr("x", x - 5)
-	    .attr("y", 195)
+	    .text(txt)
+	    .attr("x", x - (wtf / 2))
+	    .attr("y", y)
 	    .attr("transform", function(d){
-		var y = 190;
+		var y = h - offset - wtf;
 		var parts = [-90, x, y].join(",");
 		return "rotate(" + parts + ")";
 	    })
@@ -451,16 +574,32 @@ timeline.prototype.draw_evt = function(){
 
     }
 
-    if ((this.evt['echo']) && (this.evt['echo'] != evt_start) && (show_acq)){
+    if ((this.evt['echo']) && (this.evt['echo'] != evt_start) && (show_echo)){
+
+	var txt = this.evt['echo'];
+
+	if (this.evt['echo_prefix']){
+	    txt = this.evt['echo_prefix'] + " " + txt;
+	}
+
+	var dims = this.measure_text(txt, "timeline-event timeline-event-evt timeline-evt-start");
+	var offset = Math.floor(this.h_years - dims['width']); 
+
+	// huh... what... 
+
+	offset =  offset - (wtf * 3);
+
+	var h = this.h;
+	var y = h - offset;
 
 	var x = this.scale(this.evt['echo']);
 
 	this.svg.append("text")
-	    .text(this.evt['echo'])
-	    .attr("x", x - 5)
-	    .attr("y", 195)
+	    .text(txt)
+	    .attr("x", x - (wtf / 2))
+	    .attr("y", y)
 	    .attr("transform", function(d){
-		var y = 190;
+		var y = h - offset - wtf;
 		var parts = [-90, x, y].join(",");
 		return "rotate(" + parts + ")";
 	    })
@@ -510,6 +649,14 @@ timeline.prototype.draw_arrow = function(year, id, extra_classes){
 
     var h = this.h;
 
+    var y1 = this.h - (this.h_years + this.h_events);
+    var y2 = this.h - (this.h_years + 6);
+
+    // sudo put '6' and '4' in to an adjustable variable
+    // (20130924/straup)
+
+    var a_tip = this.h - (this.h_years + 4);
+
     // sudo make me one shape or a group or something
     // (20130918/straup)
 
@@ -517,14 +664,14 @@ timeline.prototype.draw_arrow = function(year, id, extra_classes){
  	.attr("id", id + "-shaft")
 	.attr("x1", x1)
 	.attr("x2", x2)
-	.attr("y1", h - 75)
-	.attr("y2", h - 45)
+	.attr("y1", y1)
+	.attr("y2", y2)
 	.attr("class", classes);
 		
     var path = [
-	"M" + (x1 - 6) + "," + (h - 53),
-	"L" + (x1) + "," + (h - 46),
-	"L" + (x1 + 6) + "," + (h - 53),
+	"M" + (x1 - 6) + "," + (a_tip - 6),
+	"L" + (x1) + "," + a_tip,
+	"L" + (x1 + 6) + "," + (a_tip - 6),
 	"Z"
     ];
 		
@@ -549,15 +696,13 @@ timeline.prototype.draw_event_span = function(start, end, id){
 
     var x1 = this.scale(start);
     var x2 = this.scale(end);
-    var h = this.h;
-
     var width = x2 - x1;
 	
     this.svg.append("rect")
 	.attr("id", id)
 	.attr("x", x1)
-	.attr("y", h - 75)
-	.attr("height", 35)
+	.attr("y", this.h - (this.h_years + this.h_events))
+	.attr("height", this.h_events)
 	.attr("width", width)
 	.attr("class", "timeline-span-rect");
 
@@ -567,13 +712,17 @@ timeline.prototype.draw_span_line = function(start, end){
   
     var x1 = this.scale(start);
     var x2 = this.scale(end);
-	
+
+    // TO DO: do not hardcode '2' but look up the CSS for
+    // this thing? Can we do that in D3...
+    // (20130924/straup)
+
     this.svg.append("line")
 	.attr("id", "thing")
 	.attr("x1", x1)
 	.attr("x2", x2)
-	.attr("y1", this.h - 39)
-	.attr("y2", this.h - 39)
+	.attr("y1", this.h - this.h_years + 1.5)
+	.attr("y2", this.h - this.h_years + 1.5)
 	.attr("class", "timeline-span-line");
 };
 
@@ -585,15 +734,14 @@ timeline.prototype.draw_span_block = function(start, end, id){
 
     var x1 = this.scale(start);
     var x2 = this.scale(end);
-    var h = this.h;
 
     var width = x2 - x1;
 	
     this.svg.append("rect")
 	.attr("id", id)
 	.attr("x", x1)
-	.attr("y", h - 75)
-	.attr("height", 35)
+	.attr("y", this.h - (this.h_years + this.h_events))
+	.attr("height", this.h_events)
 	.attr("width", width)
 	.attr("class", "timeline-item");
 
@@ -690,3 +838,28 @@ timeline.prototype.draw_evt_span = function(){
 
     return draw_span;
 };
+
+// http://stackoverflow.com/questions/14605348/title-and-axis-labels
+
+timeline.prototype.measure_text = function(text, classname) {
+
+    if (!text || text.length === 0){
+	return { height: 0, width: 0 };
+    }
+
+    var container = this.svg
+	.append("text")
+	.attr({x: -1000, y: -1000})
+	.attr("class", classname)
+	.text(text + "-");
+    
+    // note the dirty little hack to add extra padding
+    // (20130924/straup)
+
+    var bbox = container.node().getBBox();
+    container.remove();
+
+    // console.log(bbox);
+
+    return {height: bbox.height, width: bbox.width};
+}

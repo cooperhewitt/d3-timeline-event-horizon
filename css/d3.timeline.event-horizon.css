@@ -1,5 +1,4 @@
 #timeline {
-	  height: 200px;
 	  width: 100%;
 	  min-width: 700px;
 	  border: none;
@@ -39,7 +38,7 @@
     fill: #ccc !important;  
 }
 
-.timeline-event-foo {
+.timeline-event-evt {
     font-weight: 700;
 }
 

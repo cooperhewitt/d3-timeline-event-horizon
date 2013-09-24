@@ -60,6 +60,21 @@ create a new `timeline` object and call its `draw` method.
 
 	</script>
 
+Dates for an event can also be prefixed. Like this:
+
+	var event = {
+		'start': 1955,
+		'end': 1975,
+		'echo': 1971,
+		'echo_prefix': 'acquired',
+		'start_prefix': 'start',
+		'end_prefix': '',
+	};
+
+Unless you specify otherwise (in your CSS file) the height of the timeline will
+be calculated on-the-fly by measuring the length of the item names in your
+`context` array as well as years and any prefixes that you've defined. 
+
 The timeline also has a `redraw` method which is pretty much what it sounds like
 but needs to invoked explicitly. Here's how you might do it using jQuery:
 
@@ -72,17 +87,22 @@ A couple example is available in the `example` directory.
 Notes
 --
 
-* As of this writing the library can manage dynamic widths but really only works for timelines that are 200px tall. This is a bug that exists (and is
-tolerated) for the sake of expediency but will be fixed soon.
+* Despite the on-the-fly calculation of heights there are still a few hard-coded
+  variables. Some due to laziness some due to the part where I'm not entirely
+  sure I know what's going on.
 
 * Try to be gentle if you look under the hood. Perhaps this is the optimal way
   to accomplish the functionality we're after with the timeline but somehow I
   doubt it. Elegance of code has been sacrificed in the short-term in favour of
   getting a working demo out the door.
 
-* The library currently assumes the presence of jQuery (a copy of which is included in the `lib` directory. This is not a feature and will be fixed soon. 
+* The library currently assumes the presence of jQuery (a copy of which is
+  included in the `lib` directory. This is not a feature and will be fixed
+  soon.
 
-* The code that handles label placement could use some help.
+* The code that handles label placement could use some help. Some of it could
+  probably be abstracted but that sort of optimization felt like a bit of
+  yak-shaving during the initial development phase.
 
 * Patches and pull requests are welcome.
 
