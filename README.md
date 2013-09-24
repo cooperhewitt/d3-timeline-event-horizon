@@ -1,6 +1,8 @@
 d3-timeline-event-horizon
 ==
 
+![timelines](images/timelines-object-before.png)
+
 The d3-timeline-event-horizon library is a Javascript library for creating an
 interactive visualization depicting when an event occured relative to a
 user-defined milestones and using those milestones as a bracketing
