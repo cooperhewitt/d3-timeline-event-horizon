@@ -126,7 +126,7 @@ Notes
   probably be abstracted but that sort of optimization felt like a bit of
   yak-shaving during the initial development phase.
 
-* Patches and pull requests are welcome.
+* If you look under the hood you might be horrified at what you see. We made a very conscious decision, at this stage of things while we get to know D3, to focus more on the functionality of the timeline itself rather than the elegance of the code. This is a very early experiment and we would be grateful for bug fixes and suggestions for how to make it better.
 
 See also
 --
