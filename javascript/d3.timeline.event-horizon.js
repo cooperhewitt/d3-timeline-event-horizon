@@ -353,6 +353,13 @@ timeline.prototype.draw_ctx = function(){
     var h_years = this.h_years;
     var h_events = this.h_events;
 
+    var on_click = function(d){
+
+	if (d['link']){
+	    window.open(d['link'], '_timeline');
+	}
+    };
+
     var on_mouseover = function(d){
 
 	if (d['name'] == 'before and after'){
@@ -445,6 +452,7 @@ timeline.prototype.draw_ctx = function(){
 	})
 	.on('mouseover', on_mouseover)
 	.on('mouseout', on_mouseout)
+	.on('click', on_click)
 	.style("text-anchor", "center")
 	.attr("transform", function(d){
 
@@ -529,6 +537,14 @@ timeline.prototype.draw_evt = function(){
 	var h = this.h;
 	var y = h - offset;
 
+	var self = this;
+
+	var on_click = function(){
+	    if (self.evt['start_link']){
+		window.open(self.evt['start_link'], '_timeline');
+	    }
+	};
+
 	this.svg.append("text")
 	    .text(txt)
 	    .attr("x", x + (wtf / 2))
@@ -539,6 +555,7 @@ timeline.prototype.draw_evt = function(){
 		return "rotate(" + parts + ")";
 	    })
 	    .style("text-anchor", "center")
+	    .on('click', on_click)
 	    .attr("class", "timeline-event timeline-event-evt timeline-evt-start");
     }
 
@@ -560,6 +577,14 @@ timeline.prototype.draw_evt = function(){
 
 	var x = this.scale(end);
 
+	var self = this;
+
+	var on_click = function(){
+	    if (self.evt['end_link']){
+		window.open(self.evt['end_link'], '_timeline');
+	    }
+	};
+
 	this.svg.append("text")
 	    .text(txt)
 	    .attr("x", x - (wtf / 2))
@@ -569,6 +594,7 @@ timeline.prototype.draw_evt = function(){
 		var parts = [-90, x, y].join(",");
 		return "rotate(" + parts + ")";
 	    })
+	    .on('click', on_click)
 	    .style("text-anchor", "center")
 	    .attr("class", "timeline-event timeline-event-year-ending timeline-event-evt timeline-event-evt-end");
 
@@ -594,6 +620,14 @@ timeline.prototype.draw_evt = function(){
 
 	var x = this.scale(this.evt['echo']);
 
+	var self = this;
+
+	var on_click = function(){
+	    if (self.evt['echo_link']){
+		window.open(self.evt['echo_link'], '_timeline');
+	    }
+	};
+
 	this.svg.append("text")
 	    .text(txt)
 	    .attr("x", x - (wtf / 2))
@@ -603,6 +637,7 @@ timeline.prototype.draw_evt = function(){
 		var parts = [-90, x, y].join(",");
 		return "rotate(" + parts + ")";
 	    })
+	    .on('click', on_click)
 	    .style("text-anchor", "center")
 	    .attr("class", "timeline-event timeline-event-evt timeline-evt-start");
     }

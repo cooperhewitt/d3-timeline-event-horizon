@@ -77,6 +77,22 @@ Dates for an event can also be prefixed. Like this:
 		'end_prefix': '',
 	};
 
+You can also add links for events and their context. Links for contextual events
+are defined by adding a `link` property. Like this:
+
+	var context = [
+		{ 'name': 'Andrew Carnegie', 'start': 1835, 'end': 1919, 'link': '' },
+	];
+
+Links for events are defined by defining a `SOMETHING_link` where `SOMETHING` is
+either `start`, `end` or `echo`. For example:
+
+	var event = {
+		'start': 1955,
+		'start_prefix': 'start',
+		'start_link': 'http://example.com/year/1955',
+	};
+
 Unless you specify otherwise (in your CSS file) the height of the timeline will
 be calculated on-the-fly by measuring the length of the item names in your
 `context` array as well as years and any prefixes that you've defined. 
