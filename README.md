@@ -119,7 +119,7 @@ Notes
   getting a working demo out the door.
 
 * The library currently assumes the presence of jQuery (a copy of which is
-  included in the `lib` directory. This is not a feature and will be fixed
+  included in the `lib` directory). This is not a feature and will be fixed
   soon.
 
 * The code that handles label placement could use some help. Some of it could
@@ -132,5 +132,7 @@ See also
 --
 
 * [The experimental Object Timeline feature on the Cooper-Hewitt collections website](http://collection.cooperhewitt.org/experimental/#tl)
+
+* [A Timeline of Event Horizons](http://labs.cooperhewitt.org/2013/a-timeline-of-event-horizons/)
 
 * [D3.js](http://d3js.org/)
